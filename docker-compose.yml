@@ -1,0 +1,31 @@
+version: "2"
+services:
+  vault:
+    build:
+      context: ./services/vault
+    hostname: vault
+    volumes:
+      - ./services/vault/vault/assets/conf.d:/vault/conf.d
+    depends_on:
+      - consul
+    ports:
+      - "8200:8200"
+    command: ["server", "-config=/vault/conf.d/vault.hcl"]
+
+  consul:
+    image: consul:latest
+    hostname: consul
+    command: agent -server -config-file /consul/conf.d/consul.json -ui-dir /opt/consul/ui
+    volumes:
+      - ./services/vault/consul/assets/conf.d:/consul/conf.d
+      - ./services/vault/consul/data:/consul/data
+    ports:
+      - "8300:8300"
+      - "8301:8301"
+      - "8301:8301/udp"
+      - "8302:8302"
+      - "8302:8302/udp"
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
